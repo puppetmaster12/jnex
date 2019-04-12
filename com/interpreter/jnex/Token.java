@@ -1,4 +1,4 @@
-package com.interpreter.nex;
+package com.interpreter.jnex;
 
 class Token{
   final TokenType type;

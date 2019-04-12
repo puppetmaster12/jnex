@@ -1,4 +1,4 @@
-package com.interpreter.nex;
+package com.interpreter.jnex;
 
 enum TokenType{
   // Single character tokens
@@ -18,5 +18,5 @@ enum TokenType{
   AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
   PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
 
-  EOF 
+  EOF
 }
