@@ -73,8 +73,12 @@ class Scanner{
       case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
       case '/':
           if(match('/')){
-            // a comment goes till the end of the line
-            while(peek() != '\n' && !isAtEnd()) advance();
+              // a line comment goes till the end of the line
+              while(peek() != '\n' && !isAtEnd()) advance();
+          }
+          else if(match('*')){
+            // block comment check
+            while(peek() != '*' && peekNext() != '/' && !isAtEnd()) advance();
           }
           else{
             addToken(SLASH);
