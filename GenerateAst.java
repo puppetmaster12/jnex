@@ -1,4 +1,4 @@
-package com.interpreter.tool;
+package com.interpreter.jnex.tool;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,7 +19,7 @@ public class GenerateAst {
       "Unary    : Token operator, Expr right"
     ));
   }
-
+  // generate class file
   private static void defineAst(String outputDir,
                                 String baseName,
                                 List<String> types) throws IOException{
@@ -31,21 +31,40 @@ public class GenerateAst {
         writer.println();
         writer.println("import java.util.List;");
         writer.println();
-        writer.println("abstract class" + baseName + " {");
+        writer.println("abstract class " + baseName + " {");
+
+        // defined visitor class function
+        defineVisitor(writer, baseName, types);
+
         // The AST classes
         for(String type : types){
           String className = type.split(":")[0].trim();
           String fields = type.split(":")[1].trim();
           defineType(writer, baseName, className, fields);
         }
-        write.println("}");
-        write.close();
+        // the base accept() method
+        writer.println();
+        writer.println("  abstract <R> R accept(Visitor<R> visitor);");
+        writer.println("}");
+        writer.close();
   }
+  // genereate the visitor interface - visitor design pattern
+  private static void defineVisitor(PrintWriter writer, String baseName, List<String> types){
+    writer.println(" interface Visitor<R> {");
 
+    for(String type : types){
+      String typeName = type.split(":")[0].trim();
+      writer.println("   R visit" + typeName + baseName + "(" + typeName + " "
+                      + baseName.toLowerCase() + ");");
+    }
+
+    writer.println(" }");
+  }
+  // generate different types of expression classes
   private static void defineType(PrintWriter writer,
                                  String baseName, String className, String fieldList){
 
-        write.println("  static class " + className + " extends " + baseName + "{")
+        writer.println("  static class " + className + " extends " + baseName + "{");
         // Constructor
         writer.println("  " + className + "(" + fieldList + ") {");
 
@@ -57,12 +76,18 @@ public class GenerateAst {
         }
         writer.println("   }");
 
+        // Visitor pattern
+        writer.println();
+        writer.println("   <R> R accept(Visitor<R> visitor) {");
+        writer.println("    return visitor.visit" + className + baseName + "(this);");
+        writer.println("  }");
+
         // Fields
         writer.println();
         for(String field : fields){
           writer.println("   final " + field + ";");
         }
 
-        writer.println(" }")
+        writer.println(" }");
   }
 }
